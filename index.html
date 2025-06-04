@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemeriksa Kelulusan & Profil Sekolah</title>
+    <!-- Favicon Sekolah (SVG base64 encoded) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzRBOTBFMiI+CiAgPHBhdGggZD0iTTEyIDNMMSA5bDEwIDYgMTAtNi0xMC02em0wIDEwLjlMMTMuMSA5IDEyIDQuMWw4LjkgNC45TDEyIDEzLjl6TTUgMTUuOWw3IDMuNSA3LTMuNVYxMC44bC03IDMuNS03LTMuNXY1LjF6Ii8+Cjwvc3ZnPg==">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter for modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons (e.g., download icon, spinner, trophy) -->
+    <!-- Font Awesome for icons (e.g., download icon, spinner, user-graduate) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -157,10 +159,27 @@
         }
 
         .database-icon {
-            font-size: 5rem; /* Larger icon */
+            font-size: 5rem; /* Default size */
             color: #4DD0E1; /* Bright blue */
             animation: bounce-scale 1.5s infinite alternate ease-in-out; /* Subtle bounce and scale */
         }
+        /* Responsive font size for database icon */
+        @media (max-width: 640px) { /* Small screens */
+            .database-icon {
+                font-size: 4rem; /* Smaller on mobile */
+            }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) { /* Medium screens */
+            .database-icon {
+                font-size: 5rem;
+            }
+        }
+        @media (min-width: 1025px) { /* Large screens */
+            .database-icon {
+                font-size: 6rem; /* Larger on desktop */
+            }
+        }
+
 
         @keyframes bounce-scale {
             0% { transform: translateY(0) scale(1); opacity: 1; }
@@ -169,11 +188,112 @@
         }
 
         .sci-fi-text {
-            font-size: 2rem; /* Larger text */
+            font-size: 2rem; /* Default size */
             text-align: center;
             white-space: pre-wrap; /* Preserve newlines */
             overflow: hidden; /* Hide overflow for typing effect */
             line-height: 1.3;
+        }
+        /* Responsive font size for sci-fi text */
+        @media (max-width: 640px) { /* Small screens */
+            .sci-fi-text {
+                font-size: 1.5rem; /* Smaller on mobile */
+            }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) { /* Medium screens */
+            .sci-fi-text {
+                font-size: 1.75rem;
+            }
+        }
+        @media (min-width: 1025px) { /* Large screens */
+            .sci-fi-text {
+                font-size: 2rem;
+            }
+        }
+
+        /* --- Responsive Text Adjustments for very small screens (min-width: 320px, max-width: 375px) --- */
+        @media (max-width: 375px) {
+            /* School Profile Section */
+            .school-profile h2 { /* SMP Negeri 1 Tejakula */
+                font-size: 1.6rem; /* Reduced from 1.75rem */
+            }
+            .school-profile p:nth-of-type(1) { /* Motto */
+                font-size: 0.9rem; /* Reduced from 1rem */
+            }
+            .school-profile .text-sm { /* Contact Info */
+                font-size: 0.75rem; /* Reduced from 0.8rem */
+            }
+
+            /* Graduation Checker Section */
+            .card-container h1 { /* Cek Status Kelulusan */
+                font-size: 1.75rem; /* Reduced from 1.875rem */
+            }
+            .card-container p:nth-of-type(1) { /* Masukkan nama atau NISN siswa... */
+                font-size: 0.9rem; /* Reduced from 1rem */
+            }
+            #studentSearchTerm,
+            #checkButton,
+            #result {
+                font-size: 0.95rem; /* Slightly reduced from 1rem */
+            }
+            #checkButton {
+                padding-top: 0.65rem; /* Adjust button padding */
+                padding-bottom: 0.65rem;
+            }
+
+
+            /* Sci-Fi Overlay */
+            #sciFiOverlay .database-icon {
+                font-size: 3rem; /* Further reduced from 3.5rem */
+            }
+            #sciFiOverlay .sci-fi-text {
+                font-size: 1.1rem; /* Reduced from 1.25rem */
+            }
+            #sciFiOverlay p:last-of-type { /* Mohon tunggu... */
+                font-size: 0.9rem; /* Reduced from 1rem */
+            }
+
+            /* Success Page */
+            #successPage h1 { /* Selamat! Anda Lulus! */
+                font-size: 2rem; /* Reduced from 2.5rem */
+            }
+
+            #successPage h3 { /* Selamat! Anda Lulus! */
+                font-size: 1.5rem; /* Reduced from 2.5rem */
+            }
+
+            #successPage h3 { /* Selamat! Anda Lulus! */
+                font-size: 1.3rem; /* Reduced from 2.5rem */
+            }
+            #successPage p:nth-of-type(1) { /* Ini adalah buah dari kerja keras... */
+                font-size: 1.05rem; /* Reduced from 1.25rem */
+            }
+            #successPage h4 { /* Langkah Selanjutnya Menanti! */
+                font-size: 1.1rem; /* Reduced from 1.25rem */
+            }
+            #successPage p:nth-of-type(2) { /* Perjalanan Anda tidak berakhir... */
+                font-size: 0.95rem; /* Reduced from 1rem */
+            }
+            #sklDownloadSection a { /* Unduh SKL Anda */
+                font-size: 0.85rem; /* Reduced from 0.9rem */
+                padding-left: 0.8rem;
+                padding-right: 0.8rem;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            #backToMainButton {
+                font-size: 0.95rem; /* Reduced from 1rem */
+                padding-left: 1.2rem;
+                padding-right: 1.2rem;
+                padding-top: 0.65rem;
+                padding-bottom: 0.65rem;
+            }
+            #messageBox p { /* Message box text */
+                font-size: 1rem; /* Reduced from 1.1rem */
+            }
+            #messageBox button { /* Message box button */
+                font-size: 0.85rem; /* Reduced from 0.9rem */
+            }
         }
     </style>
 </head>
@@ -199,17 +319,17 @@
     <div id="mainContent" class="flex flex-col items-center justify-center w-full">
         <!-- School Profile Section -->
         <div class="school-profile card-container bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-lg mx-auto mb-8 text-center transform transition-all duration-300 ease-in-out">
-            <img src="https://placehold.co/150x150/4A90E2/ffffff?text=LOGO_SEKOLAH" alt="Logo Sekolah" class="mx-auto mb-4 rounded-full shadow-md border-4 border-blue-200">
+            <img src="https://1.gravatar.com/avatar/d7f6d37ecc523d6d3edcd16c489488260e1a07ceaf9cc3676946c33f2f7f25eb?d=identicon&r=G&s=256" alt="Logo Sekolah" class="mx-auto mb-4 rounded-full shadow-md border-4 border-blue-200">
             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">
-                SMA Negeri 1 Maju Bersama
+                SMP Negeri 1 Tejakula
             </h2>
             <p class="text-indigo-600 text-md md:text-lg font-medium mb-4">
                 "Mencetak Generasi Unggul Berakhlak Mulia"
             </p>
             <div class="text-gray-700 text-sm md:text-base space-y-1">
-                <p><i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i> Jl. Pendidikan No. 123, Kota Harapan</p>
-                <p><i class="fas fa-envelope text-indigo-500 mr-2"></i> info@sman1majubersama.sch.id</p>
-                <p><i class="fas fa-phone text-indigo-500 mr-2"></i> (021) 1234567</p>
+                <p><i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i> Jl. Pendidikan No. 123, Tejakula</p>
+                <p><i class="fas fa-envelope text-indigo-500 mr-2"></i> info@smpn1tejakula.sch.id</p>
+                <p><i class="fas fa-phone text-indigo-500 mr-2"></i> (0361) 789123</p>
             </div>
         </div>
 
@@ -249,25 +369,26 @@
 
     <!-- Success Page Section (Initially Hidden) -->
     <div id="successPage" class="hidden fixed inset-0 flex flex-col items-center justify-center text-white text-center p-4 z-20"
-         style="background: linear-gradient(to right top, #8b5cf6, #ec4899);">
+         style="background: linear-gradient(to right top, #10B981, #06B6D4);"> <!-- Changed to green/teal gradient -->
         <div class="card-celebration text-gray-900">
-            <i class="fas fa-trophy text-yellow-500 text-6xl mb-6 animate-bounce"></i>
-            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
+            <i class="fas fa-user-graduate text-yellow-500 text-6xl mb-6 animate-bounce"></i> <!-- Changed icon to toga -->
+            <h3 class="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
                 Selamat!
                 <span id="graduatedStudentName" class="text-indigo-700"></span>
                 (<span id="graduatedStudentNisn" class="text-indigo-700"></span>)
                 Anda Dinyatakan Lulus!
-            </h1>
+            </h3>
             <p class="text-xl md:text-2xl text-gray-700 mb-8" id="motivationalMessage">
-                <!-- Pesan motivasi acak akan diisi di sini -->
+                <!-- This element is now unused -->
             </p>
 
             <div class="bg-indigo-50 p-6 rounded-xl mb-8 shadow-inner">
                 <h3 class="text-2xl font-bold text-indigo-700 mb-3">Langkah Selanjutnya Menanti!</h3>
-                <p class="text-gray-800 text-lg">
-                    Perjalanan Anda tidak berakhir di sini, ini adalah awal dari babak baru yang lebih menantang dan mengasyikkan.
-                    Teruslah belajar, berani bermimpi, dan raihlah cita-cita tertinggi Anda di jenjang SMA atau Pendidikan Menengah Atas.
-                    Dunia menanti kontribusi luar biasa Anda!
+                <p class="text-gray-800 text-lg" id="mainMotivationalMessage"> <!-- Main random motivational message -->
+                    <!-- Main random motivational message will be placed here -->
+                </p>
+                <p class="text-gray-800 text-lg mt-4" id="secondaryMotivationalMessage"> <!-- Secondary random motivational message -->
+                    <!-- Secondary random motivational message will be placed here -->
                 </p>
                 <div class="mt-4" id="sklDownloadSection">
                     <!-- Link unduh SKL akan diisi di sini -->
@@ -288,8 +409,13 @@
         </div>
     </div>
 
-    <footer id="mainFooter" class="mt-10 text-white text-sm opacity-80">
-        &copy; 2025 SMA Negeri 1 Maju Bersama. Dibuat dengan ❤️.
+    <footer id="mainFooter" class="mt-10 text-white text-sm opacity-80 text-center">
+        &copy; 2025 SMP Negeri 1 Tejakula. Dibuat dengan ❤️.
+        <br>
+        Ikuti saya di Instagram:
+        <a href="https://www.instagram.com/re_ethereal/" target="_blank" class="text-white hover:text-blue-200 transition-colors duration-200">
+            <i class="fab fa-instagram ml-1 mr-1"></i>@re_ethereal
+        </a>
     </footer>
 
     <script>
@@ -347,7 +473,8 @@
         // Elements for dynamic content on success page
         const graduatedStudentNameSpan = document.getElementById('graduatedStudentName');
         const graduatedStudentNisnSpan = document.getElementById('graduatedStudentNisn');
-        const motivationalMessageDiv = document.getElementById('motivationalMessage');
+        const mainMotivationalMessageDiv = document.getElementById('mainMotivationalMessage'); // New element
+        const secondaryMotivationalMessageDiv = document.getElementById('secondaryMotivationalMessage'); // New element
         const sklDownloadSection = document.getElementById('sklDownloadSection');
 
         // Sci-Fi Overlay Elements
@@ -413,7 +540,7 @@
             // Clear existing confetti
             confettiContainer.innerHTML = '';
             const colors = ['#f0f', '#0ff', '#ff0', '#f00', '#0f0', '#00f'];
-            const numConfetti = 50; // Number of confetti pieces
+            const numConfetti = 150; // Increased number of confetti pieces
 
             for (let i = 0; i < numConfetti; i++) {
                 const confetti = document.createElement('div');
@@ -434,9 +561,16 @@
             graduatedStudentNameSpan.textContent = currentGraduatedStudent.name;
             graduatedStudentNisnSpan.textContent = currentGraduatedStudent.nisn;
 
-            // Display a random motivational message
-            const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
-            motivationalMessageDiv.textContent = motivationalMessages[randomIndex];
+            // Display two different random motivational messages
+            let randomIndex1 = Math.floor(Math.random() * motivationalMessages.length);
+            mainMotivationalMessageDiv.textContent = motivationalMessages[randomIndex1];
+
+            let randomIndex2 = Math.floor(Math.random() * motivationalMessages.length);
+            while (randomIndex2 === randomIndex1) { // Ensure it's a different message
+                randomIndex2 = Math.floor(Math.random() * motivationalMessages.length);
+            }
+            // secondaryMotivationalMessageDiv.textContent = motivationalMessages[randomIndex2];
+
 
             // Add SKL download link
             if (currentGraduatedStudent.sklLink) {
