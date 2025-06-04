@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemeriksa Kelulusan & Profil Sekolah</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons (e.g., download icon, spinner, trophy) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Main gradient background: Softer blue gradient */
+            background: linear-gradient(to right bottom, #4A90E2, #7B68EE);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            padding: 1rem; /* Add some padding for mobile */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        /* Custom styles for subtle animations/transitions */
+        .card-container {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .button-gradient {
+            background-image: linear-gradient(to right, #4f46e5 0%, #7c3aed 100%);
+            transition: all 0.3s ease;
+        }
+        .button-gradient:hover {
+            background-position: right center; /* Shift gradient on hover */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        .input-focus-ring:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Custom focus ring color */
+            border-color: #6366f1;
+        }
+        .message-box-enter {
+            animation: fadeInScale 0.3s ease-out forwards;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeOutScale {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        /* Loading Spinner Styles (used for initial data load, not search transition) */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Confetti Styles for success page */
+        .confetti-effect {
+            position: fixed; /* Use fixed to cover entire viewport */
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden; /* Ensure confetti doesn't cause scrollbars */
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f; /* Example color */
+            animation: confetti-fall 5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotateZ(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
+        }
+        .card-celebration {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 700px;
+            width: 100%;
+            transform: scale(0.9);
+            opacity: 0;
+            animation: popIn 0.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .back-button {
+            background-image: linear-gradient(to right, #6366f1 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background-position: right center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Adjustments for scrollable success page */
+        #successPage {
+            overflow-y: auto; /* Allow vertical scrolling */
+            align-items: center; /* Keep content horizontally centered */
+            padding-top: 2rem; /* Add some top padding */
+            padding-bottom: 2rem; /* Add some bottom padding */
+        }
+
+        /* Sci-Fi Overlay Styles */
+        #sciFiOverlay {
+            background: linear-gradient(to bottom, #0A1B3D, #1A2B4D); /* Dark blue gradient */
+            color: #E0F2F7; /* Light blue/white text */
+            font-family: 'monospace', 'Inter', sans-serif;
+            text-shadow: 0 0 12px #4DD0E1; /* Brighter blue glow */
+            flex-direction: column;
+            gap: 2rem; /* Increased gap */
+            opacity: 0;
+            transform: scale(0.9); /* Initial scale for zoom-in effect */
+            transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out; /* Slower fade & zoom transition */
+        }
+        #sciFiOverlay.active {
+            opacity: 1;
+            transform: scale(1); /* Zoom to normal size */
+        }
+
+        /* Database Search Effect */
+        .database-search-effect {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .database-icon {
+            font-size: 5rem; /* Larger icon */
+            color: #4DD0E1; /* Bright blue */
+            animation: bounce-scale 1.5s infinite alternate ease-in-out; /* Subtle bounce and scale */
+        }
+
+        @keyframes bounce-scale {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-10px) scale(1.05); opacity: 0.8; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .sci-fi-text {
+            font-size: 2rem; /* Larger text */
+            text-align: center;
+            white-space: pre-wrap; /* Preserve newlines */
+            overflow: hidden; /* Hide overflow for typing effect */
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Confetti Effect Container (always present but hidden/shown) -->
+    <div class="confetti-effect hidden" id="confettiContainer"></div>
+
+    <!-- Sci-Fi Overlay (Initially Hidden) -->
+    <div id="sciFiOverlay" class="fixed inset-0 hidden flex items-center justify-center z-50">
+        <div class="database-search-effect">
+            <i class="fas fa-database database-icon"></i> <!-- Database icon -->
+            <p id="sciFiText" class="sci-fi-text">
+                <!-- Dynamic sci-fi text will be inserted here -->
+            </p>
+            <p class="text-white text-lg md:text-xl mt-4 opacity-80">
+                Mohon tunggu, ini mungkin memakan waktu beberapa saat...
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content Section (School Profile & Checker) -->
+    <div id="mainContent" class="flex flex-col items-center justify-center w-full">
+        <!-- School Profile Section -->
+        <div class="school-profile card-container bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-lg mx-auto mb-8 text-center transform transition-all duration-300 ease-in-out">
+            <img src="https://placehold.co/150x150/4A90E2/ffffff?text=LOGO_SEKOLAH" alt="Logo Sekolah" class="mx-auto mb-4 rounded-full shadow-md border-4 border-blue-200">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">
+                SMA Negeri 1 Maju Bersama
+            </h2>
+            <p class="text-indigo-600 text-md md:text-lg font-medium mb-4">
+                "Mencetak Generasi Unggul Berakhlak Mulia"
+            </p>
+            <div class="text-gray-700 text-sm md:text-base space-y-1">
+                <p><i class="fas fa-map-marker-alt text-indigo-500 mr-2"></i> Jl. Pendidikan No. 123, Kota Harapan</p>
+                <p><i class="fas fa-envelope text-indigo-500 mr-2"></i> info@sman1majubersama.sch.id</p>
+                <p><i class="fas fa-phone text-indigo-500 mr-2"></i> (021) 1234567</p>
+            </div>
+        </div>
+
+        <!-- Graduation Checker Section -->
+        <div class="card-container bg-white p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-lg mx-auto text-center transform transition-all duration-300 ease-in-out">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+                Cek Status Kelulusan
+            </h1>
+            <p class="text-gray-600 text-lg md:text-xl mb-8" id="dataLoadStatus">
+                Memuat data siswa... <i class="fas fa-spinner fa-spin ml-2"></i>
+            </p>
+
+            <div class="mb-6">
+                <input
+                    type="text"
+                    id="studentSearchTerm"
+                    placeholder="Contoh: Kadek Suka Astawa atau 1915101036"
+                    class="input-focus-ring w-full px-5 py-3 border border-gray-300 rounded-xl text-gray-800 text-lg placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 transition duration-200"
+                    disabled
+                />
+            </div>
+
+            <button
+                id="checkButton"
+                class="button-gradient w-full text-white py-3 md:py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out flex items-center justify-center"
+                disabled
+            >
+                <span id="buttonText">Cari Status Kelulusan</span>
+                <!-- Spinner removed from here -->
+            </button>
+
+            <div id="result" class="mt-8 p-4 md:p-5 rounded-xl text-lg font-semibold hidden transition-all duration-300 ease-in-out">
+                <!-- Hasil akan ditampilkan di sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Page Section (Initially Hidden) -->
+    <div id="successPage" class="hidden fixed inset-0 flex flex-col items-center justify-center text-white text-center p-4 z-20"
+         style="background: linear-gradient(to right top, #8b5cf6, #ec4899);">
+        <div class="card-celebration text-gray-900">
+            <i class="fas fa-trophy text-yellow-500 text-6xl mb-6 animate-bounce"></i>
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
+                Selamat!
+                <span id="graduatedStudentName" class="text-indigo-700"></span>
+                (<span id="graduatedStudentNisn" class="text-indigo-700"></span>)
+                Anda Dinyatakan Lulus!
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8" id="motivationalMessage">
+                <!-- Pesan motivasi acak akan diisi di sini -->
+            </p>
+
+            <div class="bg-indigo-50 p-6 rounded-xl mb-8 shadow-inner">
+                <h3 class="text-2xl font-bold text-indigo-700 mb-3">Langkah Selanjutnya Menanti!</h3>
+                <p class="text-gray-800 text-lg">
+                    Perjalanan Anda tidak berakhir di sini, ini adalah awal dari babak baru yang lebih menantang dan mengasyikkan.
+                    Teruslah belajar, berani bermimpi, dan raihlah cita-cita tertinggi Anda di jenjang SMA atau Pendidikan Menengah Atas.
+                    Dunia menanti kontribusi luar biasa Anda!
+                </p>
+                <div class="mt-4" id="sklDownloadSection">
+                    <!-- Link unduh SKL akan diisi di sini -->
+                </div>
+            </div>
+
+            <button id="backToMainButton" class="back-button inline-flex items-center justify-center text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out">
+                <i class="fas fa-home mr-3"></i> Kembali ke Halaman Utama
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="messageBox" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full text-center transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            <p id="messageText" class="text-gray-800 text-xl font-medium mb-6"></p>
+            <button id="closeMessageBox" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-semibold shadow-md">Tutup</button>
+        </div>
+    </div>
+
+    <footer id="mainFooter" class="mt-10 text-white text-sm opacity-80">
+        &copy; 2025 SMA Negeri 1 Maju Bersama. Dibuat dengan ❤️.
+    </footer>
+
+    <script>
+        // URL Gist untuk data siswa
+        const GIST_DATA_URL = 'https://gist.githubusercontent.com/sukast69/46e6a0ae43bf6c3435193841bc7e0dd9/raw/9d57c7298dd511fd5b2dc274b9b52bb4df6a3719/gistfile1.txt';
+
+        let students = []; // Akan diisi dari data Gist
+        let currentGraduatedStudent = null; // Global variable to store student data
+        let sciFiTextInterval; // To clear the interval for sci-fi text animation
+
+        // Array pesan motivasi acak
+        const motivationalMessages = [
+            "Selamat atas kelulusanmu! Ini bukan akhir, melainkan awal dari petualangan baru yang menanti.",
+            "Kerja kerasmu terbayar lunas! Teruslah berani bermimpi dan jangan pernah berhenti belajar.",
+            "Pencapaian ini adalah bukti bahwa kamu mampu meraih apa pun. Teruslah melangkah maju!",
+            "Selamat, sang juara! Dunia menanti kontribusi luar biasa dari dirimu.",
+            "Angkat kepalamu tinggi-tinggi, karena kamu telah membuktikan dirimu. Masa depan cerah menantimu!",
+            "Kelulusan ini adalah batu loncatan menuju kesuksesan yang lebih besar. Tetap semangat dan raih bintangmu!",
+            "Selamat! Kamu telah menutup satu babak dan siap membuka lembaran baru yang penuh potensi.",
+            "Ini adalah momen yang patut dirayakan. Teruslah menginspirasi dan jadilah versi terbaik dari dirimu!"
+        ];
+
+        // Sci-fi loading messages for database search effect
+        const sciFiLoadingMessages = [
+            "Mengakses Database Siswa...",
+            "Memulai Algoritma Pencarian Tingkat Lanjut...",
+            "Memindai Data Historis Kelulusan...",
+            "Mengidentifikasi Entri Siswa...",
+            "Memverifikasi Kredensial NISN...",
+            "Menghitung Status Kelulusan...",
+            "Mengkompilasi Laporan Akhir...",
+            "Membangun Tautan Dokumen Aman...",
+            "Pencarian Selesai. Menampilkan Hasil..."
+        ];
+        let currentSciFiMessageIndex = 0;
+
+        // DOM Elements
+        const studentSearchTermInput = document.getElementById('studentSearchTerm');
+        const checkButton = document.getElementById('checkButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner'); // Still used for initial data load
+        const resultDiv = document.getElementById('result');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const closeMessageBox = document.getElementById('closeMessageBox');
+        const dataLoadStatus = document.getElementById('dataLoadStatus');
+        const mainFooter = document.getElementById('mainFooter'); // Get the footer element
+
+        // Elements for single page
+        const mainContent = document.getElementById('mainContent');
+        const successPage = document.getElementById('successPage');
+        const backToMainButton = document.getElementById('backToMainButton');
+        const confettiContainer = document.getElementById('confettiContainer');
+
+        // Elements for dynamic content on success page
+        const graduatedStudentNameSpan = document.getElementById('graduatedStudentName');
+        const graduatedStudentNisnSpan = document.getElementById('graduatedStudentNisn');
+        const motivationalMessageDiv = document.getElementById('motivationalMessage');
+        const sklDownloadSection = document.getElementById('sklDownloadSection');
+
+        // Sci-Fi Overlay Elements
+        const sciFiOverlay = document.getElementById('sciFiOverlay');
+        const sciFiText = document.getElementById('sciFiText');
+
+        // Fungsi untuk membersihkan dan memvalidasi tautan Google Drive SKL
+        function cleanGoogleDriveLink(rawLink) {
+            if (!rawLink || typeof rawLink !== 'string') {
+                return null;
+            }
+
+            // Beberapa pola umum untuk tautan Google Drive
+            const patterns = [
+                /(?:file\/d\/|d\/)([a-zA-Z0-9_-]{28,33})/, // Standard /file/d/ID or /d/ID
+                /id=([a-zA-Z0-9_-]{28,33})/,            // ID from query parameter
+                /view\?usp=drivesdk\s*([a-zA-Z0-9_-]{28,33})/, // ID after view?usp=drivesdk (from messy data)
+                /([a-zA-Z0-9_-]{28,33})\/view/          // ID before /view
+            ];
+
+            for (const pattern of patterns) {
+                const match = rawLink.match(pattern);
+                if (match && match[1]) {
+                    const fileId = match[1];
+                    // Rekonstruksi tautan standar Google Drive view
+                    return `https://drive.google.com/file/d/${fileId}/view?usp=drivesdk`;
+                }
+            }
+
+            // Coba perbaiki tautan yang sangat rusak atau tidak lengkap
+            if (rawLink.includes("drive.google.com") && rawLink.length > 50) {
+                // Ini adalah upaya terbaik untuk memperbaiki tautan yang sangat rusak
+                // Mungkin perlu penyesuaian lebih lanjut jika ada pola yang tidak terduga
+                const potentialId = rawLink.split('/').pop().split('?')[0].trim();
+                if (potentialId.length >= 28 && potentialId.length <= 33 && /^[a-zA-Z0-9_-]+$/.test(potentialId)) {
+                    return `https://drive.google.com/file/d/${potentialId}/view?usp=drivesdk`;
+                }
+            }
+
+            // Jika tidak ada ID file yang valid ditemukan, kembalikan null
+            return null;
+        }
+
+        // Fungsi untuk menampilkan pesan kustom dengan animasi
+        function showMessageBox(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+            messageBox.querySelector('div').classList.remove('message-box-exit');
+            messageBox.querySelector('div').classList.add('message-box-enter');
+        }
+
+        // Fungsi untuk menyembunyikan pesan kustom dengan animasi
+        function hideMessageBox() {
+            messageBox.querySelector('div').classList.remove('message-box-enter');
+            messageBox.querySelector('div').classList.add('message-box-exit');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // Confetti effect
+        function createConfetti() {
+            // Clear existing confetti
+            confettiContainer.innerHTML = '';
+            const colors = ['#f0f', '#0ff', '#ff0', '#f00', '#0f0', '#00f'];
+            const numConfetti = 50; // Number of confetti pieces
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 2 + 's'; // Stagger animations
+                confetti.style.transform = `rotateZ(${Math.random() * 360}deg)`; // Initial rotation
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        // Function to display the success page with personalized content
+        function displaySuccessPage() {
+            if (!currentGraduatedStudent) return; // Should not happen if called correctly
+
+            // Personalize the name and NISN
+            graduatedStudentNameSpan.textContent = currentGraduatedStudent.name;
+            graduatedStudentNisnSpan.textContent = currentGraduatedStudent.nisn;
+
+            // Display a random motivational message
+            const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+            motivationalMessageDiv.textContent = motivationalMessages[randomIndex];
+
+            // Add SKL download link
+            if (currentGraduatedStudent.sklLink) {
+                sklDownloadSection.innerHTML = `
+                    <a href="${currentGraduatedStudent.sklLink}" target="_blank" class="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-bold shadow-md mt-4">
+                        <i class="fas fa-download mr-3"></i> Unduh SKL Anda
+                    </a>
+                `;
+            } else {
+                sklDownloadSection.innerHTML = `<p class="text-red-600 text-sm mt-2">Tautan SKL tidak tersedia untuk siswa ini.</p>`;
+            }
+
+            // Hide main content, show success page
+            mainContent.classList.add('hidden');
+            successPage.classList.remove('hidden');
+            confettiContainer.classList.remove('hidden'); // Show confetti container
+            createConfetti(); // Trigger confetti animation
+        }
+
+        // Function to fetch and process student data from Gist
+        async function loadStudentData() {
+            try {
+                const response = await fetch(GIST_DATA_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const rawData = await response.json();
+
+                // Transform raw data to our desired format
+                students = rawData.map(item => ({
+                    name: item["Nama Siswa"] ? item["Nama Siswa"].trim() : "Nama Tidak Diketahui",
+                    nisn: item["NISN"] ? String(item["NISN"]).trim() : "NISN Tidak Diketahui",
+                    status: item["Keterangan"] && item["Keterangan"].toUpperCase().includes("LULUS") ? "Lulus" : "Tidak Lulus",
+                    sklLink: cleanGoogleDriveLink(item["Download SKL"])
+                }));
+
+                dataLoadStatus.textContent = ""; // Clear loading message
+                dataLoadStatus.classList.remove('fa-spinner', 'fa-spin');
+                dataLoadStatus.classList.add('text-green-600');
+                studentSearchTermInput.disabled = false;
+                checkButton.disabled = false;
+                studentSearchTermInput.focus(); // Focus on input after data load
+            } catch (error) {
+                console.error("Error loading student data:", error);
+                dataLoadStatus.innerHTML = `Gagal memuat data siswa. Coba lagi nanti. <i class="fas fa-exclamation-triangle text-red-500 ml-1"></i>`;
+                dataLoadStatus.classList.remove('fa-spinner', 'fa-spin');
+                dataLoadStatus.classList.add('text-red-600');
+                showMessageBox("Gagal memuat data siswa. Pastikan URL Gist benar dan formatnya valid.");
+            }
+        }
+
+        // Event listener for the search button
+        checkButton.addEventListener('click', () => {
+            const searchTerm = studentSearchTermInput.value.trim();
+
+            if (searchTerm === "") {
+                showMessageBox("Mohon masukkan nama atau NISN siswa terlebih dahulu.");
+                return;
+            }
+
+            // Hide main content and footer
+            mainContent.classList.add('hidden');
+            mainFooter.classList.add('hidden'); // Hide the footer
+            sciFiOverlay.classList.remove('hidden');
+            sciFiOverlay.classList.add('active'); // Trigger fade-in and zoom-in transition
+
+            // Start sci-fi text animation
+            currentSciFiMessageIndex = 0;
+            sciFiText.textContent = sciFiLoadingMessages[currentSciFiMessageIndex];
+            sciFiTextInterval = setInterval(() => {
+                currentSciFiMessageIndex = (currentSciFiMessageIndex + 1) % sciFiLoadingMessages.length;
+                sciFiText.textContent = sciFiLoadingMessages[currentSciFiMessageIndex];
+            }, 1200); // Change text every 1.2 seconds
+
+            // Simulate network delay for suspense (6 seconds)
+            setTimeout(() => {
+                // Clear sci-fi text animation
+                clearInterval(sciFiTextInterval);
+                sciFiOverlay.classList.remove('active'); // Trigger fade-out and zoom-out transition
+
+                // Hide sci-fi overlay after its transition (match new transition duration)
+                setTimeout(() => {
+                    sciFiOverlay.classList.add('hidden');
+
+                    const foundStudent = students.find(student =>
+                        student.name.toLowerCase() === searchTerm.toLowerCase() ||
+                        student.nisn === searchTerm
+                    );
+
+                    // Handle result
+                    if (foundStudent && foundStudent.status === "Lulus") {
+                        currentGraduatedStudent = foundStudent; // Store student data
+                        displaySuccessPage(); // Call function to display success page
+                    } else {
+                        // Display result on current page if Tidak Lulus or Not Found
+                        mainContent.classList.remove('hidden'); // Show main content again
+                        mainFooter.classList.remove('hidden'); // Show the footer again
+                        resultDiv.classList.remove('hidden');
+                        resultDiv.classList.remove('opacity-100', 'scale-100', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800');
+                        resultDiv.classList.add('opacity-0', 'scale-95');
+
+                        setTimeout(() => {
+                            let resultHtml = '';
+                            if (foundStudent) {
+                                resultDiv.classList.add('bg-red-100', 'text-red-800');
+                                resultHtml = `
+                                    <p>${foundStudent.name} (NISN: ${foundStudent.nisn}) - Status: Tidak Lulus. 😢 Tetap semangat!</p>
+                                    <p class="text-red-600 text-sm mt-2">Tautan SKL hanya tersedia untuk siswa yang lulus.</p>
+                                `;
+                            } else {
+                                resultDiv.classList.add('bg-yellow-100', 'text-yellow-800');
+                                resultHtml = `Nama atau NISN "${searchTerm}" tidak ditemukan dalam daftar. Pastikan ejaan atau angka benar.`;
+                            }
+                            resultDiv.innerHTML = resultHtml;
+                            resultDiv.classList.remove('opacity-0', 'scale-95');
+                            resultDiv.classList.add('opacity-100', 'scale-100');
+                        }, 50);
+                    }
+                }, 1200); // Match sci-fi overlay fade-out transition duration
+            }, 6000); // 6 seconds delay for "dagdig dug" effect
+        });
+
+        // Event listener for close message button
+        closeMessageBox.addEventListener('click', hideMessageBox);
+
+        // Event listener for "Kembali ke Halaman Utama" button on success page
+        backToMainButton.addEventListener('click', () => {
+            successPage.classList.add('hidden');
+            confettiContainer.classList.add('hidden'); // Hide confetti container
+            mainContent.classList.remove('hidden');
+            mainFooter.classList.remove('hidden'); // Show the footer again
+            studentSearchTermInput.value = ''; // Clear input
+            resultDiv.classList.add('hidden'); // Hide result div
+            currentGraduatedStudent = null; // Clear stored student data
+            studentSearchTermInput.focus(); // Focus back on input
+        });
+
+        // Add event listener for Enter key on input
+        studentSearchTermInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' && !checkButton.disabled) {
+                checkButton.click();
+            }
+        });
+
+        // Load student data when the page loads
+        document.addEventListener('DOMContentLoaded', loadStudentData);
+    </script>
+</body>
+</html>
